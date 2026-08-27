@@ -1,13 +1,17 @@
 # Interactive Sales Analytics Dashboard
 
-A full-stack sales analytics dashboard for exploring revenue, orders, units sold, products, and regional performance. The project combines a MySQL data source with a Node.js/Express API and a React dashboard built with Recharts.
+A full-stack sales analytics dashboard for exploring revenue, orders, units sold, products, and regional performance. It combines a MySQL data source, a Node.js/Express API, and a React dashboard built with Recharts.
+
+## Project Overview
+
+The application turns transactional sales records into a responsive business intelligence view. Users can monitor headline KPIs, inspect revenue trends, compare products and regions, and interactively filter results by region and category.
 
 ## Objectives
 
-- Turn transactional sales data into an at-a-glance performance view.
-- Provide aggregate API endpoints for dashboard metrics.
-- Compare results by region and product category.
-- Present trends and rankings in a responsive interface.
+- Convert transactional sales data into actionable summary metrics.
+- Provide reusable API endpoints for dashboard aggregates.
+- Compare performance across regions and product categories.
+- Present trends and rankings in a clear, responsive interface.
 
 ## Features
 
@@ -17,7 +21,7 @@ A full-stack sales analytics dashboard for exploring revenue, orders, units sold
 - Regional revenue performance bar chart.
 - Interactive `Region` and `Category` dropdown filters.
 - Filtered KPI requests through `/api/dashboard`.
-- Filtered chart data derived from records returned by `/api/sales`.
+- Client-side filtered chart data derived from `/api/sales` records.
 - Loading and error states in the React client.
 
 ## Technology Stack
@@ -25,28 +29,28 @@ A full-stack sales analytics dashboard for exploring revenue, orders, units sold
 - **Database:** MySQL
 - **Backend:** Node.js, Express, `mysql2/promise`, CORS, dotenv
 - **Frontend:** React, Vite, Recharts
-- **Quality and build tools:** Oxlint, Vite production build
+- **Tooling:** Oxlint and Vite production builds
 
 ## System Architecture
 
 ```text
 MySQL `sales` table
-	|
-	v
+        |
+        v
 Node.js + Express API (port 5000)
-	|
-	v
+        |
+        v
 React + Vite client (port 5173)
-	|
-	v
+        |
+        v
 Recharts visualizations and interactive filters
 ```
 
-The frontend fetches dashboard aggregates and sales records from the API. Selecting filters sends the selected values to `/api/dashboard` for KPI aggregation and filters the loaded sales records to update the charts. `All Regions` and `All Categories` omit their respective query parameters.
+The frontend requests dashboard aggregates and sales records from the backend. Filter selections are sent to `/api/dashboard` for KPI calculations, while the loaded sales records are filtered in the client to update the charts. `All Regions` and `All Categories` omit their respective query parameters.
 
 ## Database Structure
 
-The backend reads from a MySQL table named `sales`. The columns used by the application are:
+The backend reads from a MySQL table named `sales`:
 
 | Column | Usage |
 | --- | --- |
@@ -58,7 +62,7 @@ The backend reads from a MySQL table named `sales`. The columns used by the appl
 | `quantity` | Units and order calculations |
 | `unit_price` | Revenue calculation |
 
-Revenue is calculated as `quantity * unit_price`; it is not stored as a separate column in the application queries.
+Revenue is calculated as `quantity * unit_price` in the application queries; it is not stored as a separate field in those queries.
 
 ## Data Analysis
 
@@ -69,6 +73,20 @@ Revenue is calculated as `quantity * unit_price`; it is not stored as a separate
 - **Revenue trends:** monthly revenue grouped by `YYYY-MM`
 - **Top products:** products ranked by total revenue
 - **Regional performance:** regions ranked by total revenue
+
+## Actual Findings
+
+The current dashboard data shows:
+
+- **30 total orders** and **444 units sold**.
+- **$77,655 total revenue**.
+- **$2,588.50 average sale value** based on the displayed total and order count.
+- **East** is the highest-performing region; **West** is the lowest among the displayed regions.
+- **Laptop Pro 15** is the leading product, with **$50,400 revenue** in the displayed chart.
+- Monthly revenue dips in February, then increases through June, which is the highest month shown.
+- The dataset includes Electronics and Accessories categories in the displayed records.
+
+These findings describe the current sample data and will change when the MySQL data changes or filters are applied.
 
 ## API Endpoints
 
@@ -95,12 +113,16 @@ Examples:
 
 ## Interactive Filters
 
-The dashboard provides `All Regions` and `All Categories` defaults. Choosing a region, category, or both updates the KPI cards using the parameterized dashboard endpoint. The existing charts remain visible and update from matching sales records; clearing a filter restores the complete dataset.
+The dashboard provides `All Regions` and `All Categories` defaults. Selecting a region, category, or both updates the KPI cards through the parameterized dashboard endpoint and updates all existing charts from matching sales records. Clearing a filter restores the complete dataset; chart panels remain visible throughout.
 
 ## Project Structure
 
 ```text
 .
+├── README.md
+├── API_Summary.png
+├── MySQL_Sales_Data.png
+├── dashboard_overview.png
 ├── backend/
 │   ├── .env.example
 │   ├── db.js
@@ -111,10 +133,10 @@ The dashboard provides `All Regions` and `All Categories` defaults. Choosing a r
     ├── package.json
     ├── vite.config.js
     └── src/
-	├── App.jsx
-	├── App.css
-	├── index.css
-	└── main.jsx
+        ├── App.jsx
+        ├── App.css
+        ├── index.css
+        └── main.jsx
 ```
 
 ## Setup and Installation
@@ -134,7 +156,7 @@ cd backend
 npm install
 ```
 
-Copy `.env.example` to `.env` and replace the placeholders with local MySQL settings:
+Copy `backend/.env.example` to `backend/.env` and replace the placeholders with local MySQL settings:
 
 ```env
 DB_HOST=localhost
@@ -143,6 +165,8 @@ DB_PASSWORD=your_mysql_password
 DB_NAME=your_database_name
 DB_PORT=3306
 ```
+
+Keep `backend/.env` private. It is excluded by the project `.gitignore`.
 
 ### Install the frontend
 
@@ -173,14 +197,14 @@ Open the Vite URL shown in the terminal, normally `http://localhost:5173`.
 
 ## Testing and Build Commands
 
-Backend database connectivity check:
+Check backend database connectivity:
 
 ```bash
 cd backend
 node test-db.js
 ```
 
-Frontend lint and production build:
+Run frontend linting and a production build:
 
 ```bash
 cd frontend
@@ -188,11 +212,29 @@ npm run lint
 npm run build
 ```
 
-The backend currently includes a connection test rather than an automated API test suite.
+The backend currently includes a database connection check rather than an automated API test suite.
+
+## Screenshots
+
+### Dashboard Overview
+
+![Sales Analytics Dashboard](dashboard_overview.png)
+
+### API Summary Response
+
+![API summary response](API_Summary.png)
+
+### MySQL Sales Data
+
+![MySQL sales data](MySQL_Sales_Data.png)
 
 ## Challenges Faced
 
 - Translating transactional rows into consistent SQL aggregates for dashboard KPIs.
-- Keeping filter values parameterized when combining optional region and category conditions.
-- Updating chart datasets for filters while retaining the existing Recharts components.
+- Keeping optional region and category filters parameterized.
+- Updating chart datasets while retaining the existing Recharts components.
 - Maintaining readable charts and card layouts across desktop and mobile widths.
+
+## License
+
+This project is intended as a portfolio and internship project.
