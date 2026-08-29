@@ -1,7 +1,9 @@
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  preview: {
+    allowedHosts: ['interactive-sales-analytics-dashboard-production-a2d1.up.railway.app']
+  }
 })
