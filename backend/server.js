@@ -3,9 +3,11 @@ const cors = require('cors');
 const pool = require('./db');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+     origin: 'https://interactive-sales-analytics-dashboard-production-7f07.up.railway.app'
+}));
 app.use(express.json());
 
 // Test route

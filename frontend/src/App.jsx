@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 
 import './App.css';
-
+const API_URL = import.meta.env.VITE_API_URL;
 function App() {
   const [summary, setSummary] = useState(null);
   const [revenueTrends, setRevenueTrends] = useState([]);
@@ -25,11 +25,11 @@ function App() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:5000/api/dashboard'),
-      fetch('http://localhost:5000/api/revenue-trends'),
-      fetch('http://localhost:5000/api/top-products'),
-      fetch('http://localhost:5000/api/regional-performance'),
-      fetch('http://localhost:5000/api/sales')
+      fetch(`${API_URL}/api/dashboard`),
+fetch(`${API_URL}/api/revenue-trends`),
+fetch(`${API_URL}/api/top-products`),
+fetch(`${API_URL}/api/regional-performance`),
+fetch(`${API_URL}/api/sales`)
     ])
       .then(async ([summaryResponse, revenueResponse, productsResponse, regionalResponse, salesResponse]) => {
         if (
@@ -84,7 +84,7 @@ function App() {
       params.set('category', selectedCategory);
     }
 
-    fetch(`http://localhost:5000/api/dashboard?${params.toString()}`)
+    fetch(`${API_URL}/api/dashboard?${params.toString()}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch filtered dashboard data');
